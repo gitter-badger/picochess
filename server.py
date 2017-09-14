@@ -158,11 +158,10 @@ class ChessBoardHandler(ServerRequestHandler):
 
 
 class WebServer(threading.Thread):
-    def __init__(self, port: int, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
+    def __init__(self, port: int):
         shared = {}
 
         WebDisplay(shared).start()
-        WebVr(shared, dgttranslate, dgtboard).start()
         super(WebServer, self).__init__()
         wsgi_app = tornado.wsgi.WSGIContainer(pw)
 
@@ -187,9 +186,8 @@ class WebVr(DgtIface):
 
     """Handle the web (clock) communication."""
 
-    def __init__(self, shared, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
+    def __init__(self, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
         super(WebVr, self).__init__(dgttranslate, dgtboard)
-        self.shared = shared
         self.virtual_timer = None
         self.time_side = ClockSide.NONE
         self.enable_dgt_pi = dgtboard.is_pi
@@ -200,10 +198,6 @@ class WebVr(DgtIface):
         # keep the last time to find out errorous DGT_MSG_BWTIME messages (error: current time > last time)
         self.r_time = 3600 * 10  # max value cause 10h cant be reached by clock
         self.l_time = 3600 * 10  # max value cause 10h cant be reached by clock
-
-    def _create_clock_text(self):
-        if 'clock_text' not in self.shared:
-            self.shared['clock_text'] = {}
 
     def _runclock(self):
         if self.time_side == ClockSide.LEFT:
@@ -236,8 +230,6 @@ class WebVr(DgtIface):
             if self.time_side == ClockSide.NONE:
                 icon_d = 'fa-sort'
             text = text_l + '&nbsp;<i class="fa ' + icon_d + '"></i>&nbsp;' + text_r
-            self._create_clock_text()
-            self.shared['clock_text'] = text
             result = {'event': 'Clock', 'msg': text}
             EventHandler.write_to_clients(result)
 
@@ -260,8 +252,6 @@ class WebVr(DgtIface):
             logging.debug('ignored %s - devs: %s', text, message.devs)
             return True
         self.clock_show_time = False
-        self._create_clock_text()
-        self.shared['clock_text'] = text
         result = {'event': 'Clock', 'msg': text}
         EventHandler.write_to_clients(result)
         return True
@@ -278,8 +268,6 @@ class WebVr(DgtIface):
             logging.debug('ignored %s - devs: %s', text, message.devs)
             return True
         self.clock_show_time = False
-        self._create_clock_text()
-        self.shared['clock_text'] = text
         result = {'event': 'Clock', 'msg': text}
         EventHandler.write_to_clients(result)
         return True
@@ -343,9 +331,6 @@ class WebVr(DgtIface):
     def getName(self):
         """Return name."""
         return 'web'
-
-    def _create_task(self, msg):
-        IOLoop.instance().add_callback(callback=lambda: self._process_message(msg))
 
 
 class WebDisplay(DisplayMsg, threading.Thread):

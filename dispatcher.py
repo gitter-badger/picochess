@@ -47,7 +47,6 @@ class Dispatcher(DispatchDgt, Thread):
 
     def register(self, dev):
         """Register new device to send DgtApi messsages."""
-        # dev.start()
         devname = dev.getName()
 
         logging.debug('device %s registered', devname)
@@ -142,6 +141,10 @@ class Dispatcher(DispatchDgt, Thread):
 
     def process(self, devname, message):
         device = self.devices[devname]  # type: DgtIface
+
+        logging.debug('(%s) handle DgtApi: %s started', devname, message)
+        device.case_res = True
+
         if False:  # switch-case
             pass
         elif isinstance(message, Dgt.DISPLAY_MOVE):
@@ -174,6 +177,9 @@ class Dispatcher(DispatchDgt, Thread):
                     device.enable_dgt_3000 = True
         else:  # switch-default
             pass
+
+        logging.debug('(%s) handle DgtApi: %s ended', devname, message)
+        return device.case_res
 
     def stop_maxtimer(self, devname):
         """Stop the maxtimer."""

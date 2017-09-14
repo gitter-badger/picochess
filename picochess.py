@@ -38,7 +38,7 @@ from timecontrol import TimeControl
 from utilities import get_location, update_picochess, get_opening_books, shutdown, reboot, checkout_tag
 from utilities import Observable, DisplayMsg, version, evt_queue, write_picochess_ini, hms_time, RepeatedTimer
 from pgn import Emailer, PgnDisplay
-from server import WebServer
+from server import WebServer, WebVr
 from talker.picotalker import PicoTalkerDisplay
 from dispatcher import Dispatcher
 
@@ -649,9 +649,8 @@ def main():
 
     # Launch web server
     if args.web_server_port:
-        # WebServer(args.web_server_port, dgttranslate, dgtboard).start()
-        # dgtdispatcher.register('web')
-        dgtdispatcher.register(WebServer(args.web_server_port, dgttranslate, dgtboard))
+        WebServer(args.web_server_port).start()
+        dgtdispatcher.register(WebVr(dgttranslate, dgtboard))
 
     if args.console:
         logging.debug('starting PicoChess in console mode')
@@ -660,14 +659,10 @@ def main():
         # Connect to DGT board
         logging.debug('starting PicoChess in board mode')
         if args.dgtpi:
-            # DgtPi(dgttranslate, dgtboard).start()
-            # dgtdispatcher.register('i2c')
             dgtdispatcher.register(DgtPi(dgttranslate, dgtboard))
         else:
             logging.debug('(ser) starting the board connection')
             dgtboard.run()  # a clock can only be online together with the board, so we must start it infront
-        # DgtHw(dgttranslate, dgtboard).start()
-        # dgtdispatcher.register('ser')
         dgtdispatcher.register(DgtHw(dgttranslate, dgtboard))
     # The class Dispatcher sends DgtApi messages at the correct (delayed) time out
     dgtdispatcher.start()
