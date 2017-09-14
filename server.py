@@ -186,18 +186,22 @@ class WebVr(DgtIface):
 
     """Handle the web (clock) communication."""
 
-    def __init__(self, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
-        super(WebVr, self).__init__(dgttranslate, dgtboard)
+    def __init__(self):
+        super(WebVr, self).__init__()
         self.virtual_timer = None
         self.time_side = ClockSide.NONE
-        self.enable_dgt_pi = dgtboard.is_pi
-        sub = 2 if dgtboard.is_pi else 0
-        DisplayMsg.show(Message.DGT_CLOCK_VERSION(main=2, sub=sub, dev='web', text=None))
+        self.enable_dgt_pi = False
         self.clock_show_time = True
-
         # keep the last time to find out errorous DGT_MSG_BWTIME messages (error: current time > last time)
         self.r_time = 3600 * 10  # max value cause 10h cant be reached by clock
         self.l_time = 3600 * 10  # max value cause 10h cant be reached by clock
+
+    def old_init(self, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
+        self.dgttranslate = dgttranslate  # override the super function
+        self.dgtboard = dgtboard  # these two commands need to be called in register()
+        self.enable_dgt_pi = self.dgtboard.is_pi
+        sub = 2 if self.dgtboard.is_pi else 0
+        DisplayMsg.show(Message.DGT_CLOCK_VERSION(main=2, sub=sub, dev=self.getName(), text=None))
 
     def _runclock(self):
         if self.time_side == ClockSide.LEFT:

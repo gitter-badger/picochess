@@ -28,15 +28,20 @@ class DgtIface(DisplayDgt):
 
     """An Interface class for DgtHw, DgtPi, WebVr."""
 
-    def __init__(self, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
+    def __init__(self):
         super(DgtIface, self).__init__()
 
-        self.dgtboard = dgtboard
-        self.dgttranslate = dgttranslate
+        self.dgtboard = None
+        self.dgttranslate = None
 
         self.clock_running = False
         self.enable_dgt_3000 = False
         self.case_res = True
+
+    def old_init(self, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
+        """This function is still needed, as long we not finished."""
+        self.dgttranslate = dgttranslate
+        self.dgtboard = dgtboard
 
     def display_text_on_clock(self, message):
         """Override this function."""

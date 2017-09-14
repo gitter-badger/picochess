@@ -25,16 +25,20 @@ from dgt.api import Dgt, DgtApi
 from dgt.menu import DgtMenu
 from dgt.iface import DgtIface
 from dgt.util import ClockIcons
+from dgt.translate import DgtTranslate
+from dgt.board import DgtBoard
 
 
 class Dispatcher(DispatchDgt, Thread):
 
     """A dispatcher taking the dispatch_queue and fill dgt_queue with the commands in time."""
 
-    def __init__(self, dgtmenu: DgtMenu):
+    def __init__(self, dgtmenu: DgtMenu, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
         super(Dispatcher, self).__init__()
 
         self.dgtmenu = dgtmenu
+        self.dgttranslate = dgttranslate
+        self.dgtboard = dgtboard
         self.devices = {}
         self.maxtimer = {}
         self.maxtimer_running = {}
@@ -50,6 +54,7 @@ class Dispatcher(DispatchDgt, Thread):
         devname = dev.getName()
 
         logging.debug('device %s registered', devname)
+        dev.old_init(self.dgttranslate, self.dgtboard)  # Still needed!
         self.devices[devname] = dev
         self.maxtimer[devname] = None
         self.maxtimer_running[devname] = False
@@ -70,10 +75,6 @@ class Dispatcher(DispatchDgt, Thread):
         self.maxtimer_running[devname] = False
         self.dgtmenu.disable_picochess_displayed(devname)
 
-        # if dev not in self.devices:
-        #     logging.debug('delete not registered (%s) tasks', dev)
-        #     self.tasks[dev] = []
-        #     return
         if self.tasks[devname]:
             logging.debug('processing delayed (%s) tasks: %s', devname, self.tasks[devname])
         else:

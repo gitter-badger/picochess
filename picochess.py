@@ -637,7 +637,7 @@ def main():
     dgttranslate = DgtTranslate(args.beep_config, args.beep_some_level, args.language, version)
     dgtmenu = DgtMenu(args.disable_confirm_message, args.ponder_interval, args.speed_voice, args.capital_letters,
                       dgttranslate)
-    dgtdispatcher = Dispatcher(dgtmenu)
+    dgtdispatcher = Dispatcher(dgtmenu, dgttranslate, dgtboard)
 
     time_control, time_text = transfer_time(args.time.split())
     time_text.beep = False
@@ -650,7 +650,7 @@ def main():
     # Launch web server
     if args.web_server_port:
         WebServer(args.web_server_port).start()
-        dgtdispatcher.register(WebVr(dgttranslate, dgtboard))
+        dgtdispatcher.register(WebVr())
 
     if args.console:
         logging.debug('starting PicoChess in console mode')
@@ -659,11 +659,11 @@ def main():
         # Connect to DGT board
         logging.debug('starting PicoChess in board mode')
         if args.dgtpi:
-            dgtdispatcher.register(DgtPi(dgttranslate, dgtboard))
+            dgtdispatcher.register(DgtPi())
         else:
             logging.debug('(ser) starting the board connection')
             dgtboard.run()  # a clock can only be online together with the board, so we must start it infront
-        dgtdispatcher.register(DgtHw(dgttranslate, dgtboard))
+        dgtdispatcher.register(DgtHw())
     # The class Dispatcher sends DgtApi messages at the correct (delayed) time out
     dgtdispatcher.start()
     # Save to PGN
