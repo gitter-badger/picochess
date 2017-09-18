@@ -624,8 +624,8 @@ class DgtBoard(object):
                 if self._open_bluetooth():
                     return _success('/dev/rfcomm123')
 
-            # text = self.dgttranslate.text('N00_noboard', 'Board' + waitchars[self.wait_counter])
             bwait = 'Board' + waitchars[self.wait_counter]
+            # text = self.dgttranslate.text('N00_noboard', bwait)
             text = Dgt.DISPLAY_TEXT(l='no e-' + bwait, m='no' + bwait, s=bwait, wait=True, beep=False, maxtime=0.1,
                                     devs={'i2c', 'web'})
             DisplayMsg.show(Message.DGT_NO_EBOARD_ERROR(text=text))

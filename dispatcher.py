@@ -25,7 +25,6 @@ from dgt.api import Dgt, DgtApi
 from dgt.menu import DgtMenu
 from dgt.iface import DgtIface
 from dgt.util import ClockIcons
-from dgt.translate import DgtTranslate
 from dgt.board import DgtBoard
 
 
@@ -33,11 +32,10 @@ class Dispatcher(DispatchDgt, Thread):
 
     """A dispatcher taking the dispatch_queue and fill dgt_queue with the commands in time."""
 
-    def __init__(self, dgtmenu: DgtMenu, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
+    def __init__(self, dgtmenu: DgtMenu, dgtboard: DgtBoard):
         super(Dispatcher, self).__init__()
 
         self.dgtmenu = dgtmenu
-        self.dgttranslate = dgttranslate
         self.dgtboard = dgtboard
         self.devices = {}
         self.maxtimer = {}
@@ -51,10 +49,10 @@ class Dispatcher(DispatchDgt, Thread):
 
     def register(self, dev):
         """Register new device to send DgtApi messsages."""
-        devname = dev.getName()
+        devname = dev.get_name()
 
         logging.debug('device %s registered', devname)
-        dev.old_init(self.dgttranslate, self.dgtboard)  # Still needed!
+        dev.old_init(self.dgtmenu.dgttranslate, self.dgtboard)  # Still needed!
         self.devices[devname] = dev
         self.maxtimer[devname] = None
         self.maxtimer_running[devname] = False

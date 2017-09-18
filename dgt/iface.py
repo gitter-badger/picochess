@@ -75,7 +75,7 @@ class DgtIface(DisplayDgt):
         """Override this function."""
         raise NotImplementedError()
 
-    def getName(self):
+    def get_name(self):
         """Override this function."""
         raise NotImplementedError()
 
@@ -85,12 +85,12 @@ class DgtIface(DisplayDgt):
         if bit_board.is_legal(message.move):
             move_text = bit_board.san(message.move)
         else:
-            logging.warning('[%s] illegal move %s found - uci960: %s fen: %s', self.getName(), message.move,
+            logging.warning('[%s] illegal move %s found - uci960: %s fen: %s', self.get_name(), message.move,
                             message.uci960, message.fen)
             move_text = 'er{}' if is_xl else 'err {}'
             move_text = move_text.format(message.move.uci()[:4])
 
         if message.side == ClockSide.RIGHT:
             move_text = move_text.rjust(6 if is_xl else 8)
-        text = self.dgttranslate.move(move_text)
+        text = self.dgttranslate.san(move_text)
         return bit_board, text

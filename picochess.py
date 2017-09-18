@@ -614,12 +614,12 @@ def main():
     dgttranslate = DgtTranslate(args.beep_config, args.beep_some_level, args.language, version)
     dgtmenu = DgtMenu(args.disable_confirm_message, args.ponder_interval, args.speed_voice, args.capital_letters,
                       dgttranslate)
-    dgtdispatcher = Dispatcher(dgtmenu, dgttranslate, dgtboard)
+    dgtdispatcher = Dispatcher(dgtmenu, dgtboard)
 
     time_control, time_text = transfer_time(args.time.split())
     time_text.beep = False
     # The class dgtDisplay fires Event (Observable) & DispatchDgt (Dispatcher)
-    DgtDisplay(dgttranslate, dgtmenu, time_control).start()
+    DgtDisplay(dgtmenu, time_control).start()
 
     # Create PicoTalker for speech output
     PicoTalkerDisplay(args.user_voice, args.computer_voice, args.speed_voice).start()

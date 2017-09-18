@@ -56,8 +56,7 @@ class DgtTranslate(object):
         """Set capital letters."""
         self.capital = capital
 
-    def capital_text(self, text, is_obj=True):
-        """Transfer text to capital text or not."""
+    def _capital_text(self, text, is_obj=True):
         if self.capital:
             if is_obj:
                 text.m = text.m.upper()
@@ -66,7 +65,7 @@ class DgtTranslate(object):
                 return text.upper()
         return text
 
-    def move(self, text: str):
+    def san(self, text: str):
         """Return move text for clock display."""
         directory = {}
         if self.language == 'de':
@@ -81,7 +80,7 @@ class DgtTranslate(object):
             directory = {'R': 'T', 'N': 'C', 'B': 'A', 'Q': 'D', 'K': '@'}
         for i, j in directory.items():
             text = text.replace(i, j)
-        return self.capital_text(text.replace('@', 'R'), False)  # replace the King "@" from fr, es, it languages
+        return self._capital_text(text.replace('@', 'R'), False)  # replace the King "@" from fr, es, it languages
 
     def text(self, str_code: str, msg='', devs=None):
         """Return standard text for clock display."""
@@ -950,13 +949,13 @@ class DgtTranslate(object):
             entxt = Dgt.DISPLAY_TEXT(l=text_id, m=text_id, s=text_id, wait=False, beep=beep, maxtime=0, devs=devs)
             logging.warning('unknown text_id %s', text_id)
         if self.language == 'de' and detxt is not None:
-            return self.capital_text(detxt)
+            return self._capital_text(detxt)
         if self.language == 'nl' and nltxt is not None:
-            return self.capital_text(nltxt)
+            return self._capital_text(nltxt)
         if self.language == 'fr' and frtxt is not None:
-            return self.capital_text(frtxt)
+            return self._capital_text(frtxt)
         if self.language == 'es' and estxt is not None:
-            return self.capital_text(estxt)
+            return self._capital_text(estxt)
         if self.language == 'it' and ittxt is not None:
-            return self.capital_text(ittxt)
-        return self.capital_text(entxt)
+            return self._capital_text(ittxt)
+        return self._capital_text(entxt)

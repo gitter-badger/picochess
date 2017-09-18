@@ -21,8 +21,6 @@ from threading import Lock
 from utilities import hms_time
 from dgt.iface import DgtIface
 from dgt.util import ClockIcons, ClockSide, DgtClk, DgtCmd
-from dgt.translate import DgtTranslate
-from dgt.board import DgtBoard
 
 
 class DgtHw(DgtIface):
@@ -64,7 +62,7 @@ class DgtHw(DgtIface):
         text = message.m if display_m else message.s
         if text is None:
             text = message.l if display_m else message.m
-        if self.getName() not in message.devs:
+        if self.get_name() not in message.devs:
             logging.debug('ignored %s - devs: %s', text, message.devs)
             return True
         left_icons = message.ld if hasattr(message, 'ld') else ClockIcons.NONE
@@ -86,7 +84,7 @@ class DgtHw(DgtIface):
                 text = text[:2].rjust(3) + text[2:].rjust(3)
             else:
                 text = text[:2].ljust(3) + text[2:].ljust(3)
-        if self.getName() not in message.devs:
+        if self.get_name() not in message.devs:
             logging.debug('ignored %s - devs: %s', text, message.devs)
             return True
         if display_m:
@@ -98,7 +96,7 @@ class DgtHw(DgtIface):
 
     def display_time_on_clock(self, message):
         """Display the time on the dgtxl/3k."""
-        if self.getName() not in message.devs:
+        if self.get_name() not in message.devs:
             logging.debug('ignored endText - devs: %s', message.devs)
             return True
         if self.clock_running or message.force:
@@ -130,7 +128,7 @@ class DgtHw(DgtIface):
 
     def stop_clock(self, devs: set):
         """Stop the dgtxl/3k."""
-        if self.getName() not in devs:
+        if self.get_name() not in devs:
             logging.debug('ignored stopClock - devs: %s', devs)
             return True
         logging.debug('(%s) clock sending stop time to clock l:%s r:%s', ','.join(devs),
@@ -162,7 +160,7 @@ class DgtHw(DgtIface):
 
     def start_clock(self, time_left: int, time_right: int, side: ClockSide, devs: set):
         """Start the dgtxl/3k."""
-        if self.getName() not in devs:
+        if self.get_name() not in devs:
             logging.debug('ignored startClock - devs: %s', devs)
             return True
         logging.debug('(%s) clock received last time from clock l:%s r:%s', ','.join(devs),
@@ -173,6 +171,6 @@ class DgtHw(DgtIface):
                       hms_time(time_left), hms_time(time_right))
         return self._resume_clock(side)
 
-    def getName(self):
+    def get_name(self):
         """Get name."""
         return 'ser'

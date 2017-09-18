@@ -35,9 +35,9 @@ class DgtDisplay(DisplayMsg, threading.Thread):
 
     """Dispatcher for Messages towards DGT hardware or back to the event system (picochess)."""
 
-    def __init__(self, dgttranslate: DgtTranslate, dgtmenu: DgtMenu, time_control: TimeControl):
+    def __init__(self, dgtmenu: DgtMenu, time_control: TimeControl):
         super(DgtDisplay, self).__init__()
-        self.dgttranslate = dgttranslate
+        self.dgttranslate = dgtmenu.dgttranslate
         self.dgtmenu = dgtmenu
         self.time_control = time_control
 
