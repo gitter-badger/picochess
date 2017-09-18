@@ -120,7 +120,7 @@ class Dispatcher(DispatchDgt, Thread):
                     if message.maxtime == 2.1:  # 2.1=picochess message
                         self.dgtmenu.enable_picochess_displayed(devname)
                     if self.dgtmenu.inside_updt_menu():
-                        if message.maxtime == 0.1:  # 0.1=eboard error
+                        if message.maxtime == 0.1:  # 0.1=eBoard error
                             logging.debug('(%s) inside update menu => board errors not displayed', devname)
                             return
                         if message.maxtime == 1.1:  # 1.1=eBoard connect
@@ -142,27 +142,26 @@ class Dispatcher(DispatchDgt, Thread):
         device = self.devices[devname]  # type: DgtIface
 
         logging.debug('(%s) handle DgtApi: %s started', devname, message)
-        device.case_res = True
 
         if False:  # switch-case
             pass
         elif isinstance(message, Dgt.DISPLAY_MOVE):
-            device.case_res = device.display_move_on_clock(message)
+            device.display_move_on_clock(message)
         elif isinstance(message, Dgt.DISPLAY_TEXT):
-            device.case_res = device.display_text_on_clock(message)
+            device.display_text_on_clock(message)
         elif isinstance(message, Dgt.DISPLAY_TIME):
-            device.case_res = device.display_time_on_clock(message)
+            device.display_time_on_clock(message)
         elif isinstance(message, Dgt.LIGHT_CLEAR):
-            device.case_res = device.clear_light_on_revelation()
+            device.clear_light_on_revelation()
         elif isinstance(message, Dgt.LIGHT_SQUARES):
-            device.case_res = device.light_squares_on_revelation(message.uci_move)
+            device.light_squares_on_revelation(message.uci_move)
         elif isinstance(message, Dgt.CLOCK_STOP):
             if device.clock_running:
-                device.case_res = device.stop_clock(message.devs)
+                device.stop_clock(message.devs)
             else:
                 logging.debug('(%s) clock is already stopped', ','.join(message.devs))
         elif isinstance(message, Dgt.CLOCK_START):
-            device.case_res = device.start_clock(message.time_left, message.time_right, message.side, message.devs)
+            device.start_clock(message.time_left, message.time_right, message.side, message.devs)
         elif isinstance(message, Dgt.CLOCK_VERSION):
             text = device.dgttranslate.text('Y21_picochess', devs=message.devs)
             text.rd = ClockIcons.DOT
@@ -176,9 +175,7 @@ class Dispatcher(DispatchDgt, Thread):
                     device.enable_dgt_3000 = True
         else:  # switch-default
             pass
-
         logging.debug('(%s) handle DgtApi: %s ended', devname, message)
-        return device.case_res
 
     def stop_maxtimer(self, devname):
         """Stop the maxtimer."""

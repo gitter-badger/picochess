@@ -36,7 +36,6 @@ class DgtIface(DisplayDgt):
 
         self.clock_running = False
         self.enable_dgt_3000 = False
-        self.case_res = True
 
     def old_init(self, dgttranslate: DgtTranslate, dgtboard: DgtBoard):
         """This function is still needed, as long we not finished."""

@@ -50,7 +50,6 @@ class DgtHw(DgtIface):
         logging.debug('[%s]', text)
         text = bytes(text, 'utf-8')
         with self.lib_lock:
-
             res = self.dgtboard.set_text_3k(text, 0x03 if beep else 0x00)
             if not res:
                 logging.warning('SetText() returned error %i', res)
